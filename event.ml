@@ -1,0 +1,63 @@
+open Game
+
+type event = Game.game * event_world -> Game.game * event_world
+and  event_world = { schedule: (int * event) list;
+                     random:   (float * event) list;
+                     news:     string list; }
+
+let initial_world = { schedule = []; random = []; news = [] }
+
+let rec insert_ordered lst (k, v) =
+  match lst with
+  | [] -> (k, v) :: []
+  | (k2, v2) :: cdr ->
+     if k2 <= k
+     then (k,v) :: ((k2, v2) :: cdr)
+     else (k2, v2) :: insert_ordered cdr (k,v)
+
+
+let schedule_event world event day =
+  { world with schedule = insert_ordered world.schedule (day, event) }
+
+let add_random_event world event prob =
+  { world with random = (prob, event) :: world.random }
+
+let add_news world news =
+  { world with news = news :: world.news }
+
+let clear_news world =
+  { world with news = [] }
+
+let rec do_schedule (game, world) =
+  match world.schedule with
+  | [] -> (game, world)
+  | (day, evt) :: cdr ->
+     let nworld = {world with schedule = cdr} in
+     if day < game.day
+     then do_schedule (game, nworld)
+     else if day = game.day
+     then do_schedule (evt (game, nworld))
+     else (game, world)
+
+let do_random (game, world) =
+  let rec inner lst gw =
+    match lst with
+    | [] -> gw
+    | (prob, evt) :: cdr ->
+       if (Random.float 1.0) < prob
+       then inner cdr (evt gw)
+       else inner cdr gw
+  in inner world.random (game, world)
+
+let rec print_news news =
+  match news with
+  | [] -> ()
+  | title :: cdr ->
+     print_endline title;
+     print_news cdr
+
+let do_event_day gw =
+  let (game, world) = do_random (do_schedule gw)
+  in print_endline "news:";
+     print_news world.news;
+     (game, (clear_news world))
