@@ -22,14 +22,14 @@ let process_cmd game str =
 
 let hour_to_time h =
     match h with
-    | 0 -> " 9:00"
+    | 0 -> "9:00"
     | 1 -> "10:00"
     | 2 -> "11:00"
     | 3 -> "12:00"
-    | 4 -> " 1:00"
-    | 5 -> " 2:00"
-    | 6 -> " 3:00"
-    | 7 -> " 4:00"
+    | 4 -> "1:00"
+    | 5 -> "2:00"
+    | 6 -> "3:00"
+    | 7 -> "4:00"
     | _ -> raise (Failure "hour out of bounds")
 
 
@@ -37,7 +37,8 @@ let rec day_loop g h =
   if h == 8
   then (prompt_ret "markets are closed"; newln(); g)
   else (
-    Printf.printf "%s> " (hour_to_time h);
+    Printf.printf "%s %s> " (hour_to_time h)
+      (num_to_dollars (margin_left g));
     let ng = Game.step_hour (process_cmd g (read_line ()))
     in
     newln();
@@ -45,10 +46,16 @@ let rec day_loop g h =
     newln ();
     day_loop ng (h + 1))
 
+
+let rec hidden_day_loop g h =
+  if h == 8
+  then g
+  else hidden_day_loop (Game.step_hour g) (1 + h)
+
 let do_day g =
   if prompt_yn "trade today?"
   then (print_endline "markets are open!"; day_loop g 0)
-  else (newln (); g)
+  else (newln (); (hidden_day_loop g 0))
 
 let rec game_loop og (g, w) =
   clear_screen ();
@@ -57,7 +64,7 @@ let rec game_loop og (g, w) =
   (newln ();
    print_portfolio ng;
    newln ();
-   print_prices og g;
+   print_prices og ng;
    newln ();
    game_loop ng ((Game.step_day (do_day ng)), nw))
 
