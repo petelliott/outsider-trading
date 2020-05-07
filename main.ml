@@ -45,6 +45,11 @@ let rec day_loop g h =
     newln ();
     day_loop ng (h + 1))
 
+let do_day g =
+  if prompt_yn "trade today?"
+  then (print_endline "markets are open!"; day_loop g 0)
+  else g
+
 let rec game_loop og (g, w) =
   print_endline (date g.day);
   let ng, nw = Event.do_event_day (g, w) in
@@ -53,8 +58,7 @@ let rec game_loop og (g, w) =
    newln ();
    print_prices og g;
    newln ();
-   prompt_ret "markets are open!";
-   game_loop ng ((Game.step_day (day_loop ng 0)), nw))
+   game_loop ng ((Game.step_day (do_day ng)), nw))
 
 
 let () =

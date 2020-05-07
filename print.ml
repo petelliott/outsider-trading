@@ -73,5 +73,12 @@ let prompt_ret str =
   Printf.printf "%s [RET]: " str;
   ignore (read_line ())
 
+let rec prompt_yn str =
+  Printf.printf "%s [y/n]: " str;
+  match (String.get (String.uncapitalize_ascii (read_line ())) 0) with
+  | 'y' -> true
+  | 'n' -> false
+  | _   -> prompt_yn str
+
 let newln () =
   print_endline ""
