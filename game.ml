@@ -50,8 +50,8 @@ let add_stock game =
       symbol     = stock_name ();
       price      = Prob.rand_round (Prob.gauss_rand 100.0 50.0);
       owned      = 0;
-      derivative = (Prob.gauss_rand 1.0 0.05);
-      volatility = (Prob.gauss_rand 0.0 0.05);
+      derivative = (Prob.gauss_rand 1.0 0.03);
+      volatility = (Prob.gauss_rand 0.0 0.07);
     } :: game.stocks }
 
 let rec add_n_stocks n game =
@@ -113,7 +113,7 @@ let update_stock_price game stock =
   { stock with price = Prob.rand_round
                          ((Float.of_int stock.price)
                          *. stock.derivative *. game.trend);
-               derivative = stock.derivative +. (Prob.gauss_rand 0.0 0.05) }
+               derivative = stock.derivative +. (Prob.gauss_rand 0.0 0.01) }
 
 
 let update_stock_prices game stocks =

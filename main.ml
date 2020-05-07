@@ -59,9 +59,14 @@ let print_prices og ng =
     og.stocks ng.stocks
 
 
+let prompt_ret () =
+  Printf.printf "[RET]: ";
+  ignore (read_line ())
+
+
 let rec day_loop g h =
   if h == 8
-  then g
+  then (print_endline ""; g)
   else (
     Printf.printf "hour%i>" h;
     ignore (read_line ());
@@ -72,15 +77,18 @@ let rec day_loop g h =
 
 
 
-let rec game_loop (g, w) =
+let rec game_loop og (g, w) =
   print_endline (date g.day);
   print_portfolio g;
   print_endline "";
-  ignore (read_line ());
-  game_loop (Event.do_event_day
-               ((Game.step_day (day_loop g 0)), w))
+  print_prices og g;
+  print_endline "";
+  prompt_ret ();
+  game_loop g (Event.do_event_day
+                 ((Game.step_day (day_loop g 0)), w))
 
 
 let () =
   Random.self_init ();
-  game_loop (Game.initial_game (), Event.initial_world)
+  let g = Game.initial_game () in
+  game_loop g (g, Event.initial_world)
