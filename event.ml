@@ -10,7 +10,7 @@ let rec insert_ordered lst (k, v) =
   match lst with
   | [] -> (k, v) :: []
   | (k2, v2) :: cdr ->
-     if k2 <= k
+     if k <= k2
      then (k,v) :: ((k2, v2) :: cdr)
      else (k2, v2) :: insert_ordered cdr (k,v)
 
@@ -18,10 +18,10 @@ let rec insert_ordered lst (k, v) =
 let schedule_event event day world =
   { world with schedule = insert_ordered world.schedule (day, event) }
 
-let rec schedule_events sevts world =
+let rec apply_events sevts world =
   match sevts with
   | [] -> world
-  | car :: cdr -> car (schedule_events cdr world)
+  | car :: cdr -> car (apply_events cdr world)
 
 let add_random_event event prob world =
   { world with random = (prob, event) :: world.random }

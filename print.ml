@@ -49,9 +49,18 @@ let print_portfolio game =
     (num_to_dollars (margin_left game))
     (intrest_owed game)
 
+let rec stock_iter2 f a b =
+  match (a, b) with
+  | ([], []) -> ()
+  | (l, []) -> stock_iter2 f l l
+  | ([], l) -> stock_iter2 f l l
+  | (cara :: cdra, carb :: cdrb) ->
+     f cara carb;
+     stock_iter2 f cdra cdrb
+
 
 let print_prices og ng =
-  List.iter2
+  stock_iter2
     (fun o n ->
       Printf.printf "%s: $%i (%s), "
         n.symbol n.price (num_to_percent (((Float.of_int n.price) -.

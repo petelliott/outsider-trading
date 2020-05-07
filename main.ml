@@ -47,13 +47,14 @@ let rec day_loop g h =
 
 let rec game_loop og (g, w) =
   print_endline (date g.day);
-  print_portfolio g;
-  newln ();
-  print_prices og g;
-  newln ();
-  prompt_ret "markets are open!";
-  game_loop g (Event.do_event_day
-                 ((Game.step_day (day_loop g 0)), w))
+  let ng, nw = Event.do_event_day (g, w) in
+  (newln ();
+   print_portfolio ng;
+   newln ();
+   print_prices og g;
+   newln ();
+   prompt_ret "markets are open!";
+   game_loop ng ((Game.step_day (day_loop ng 0)), nw))
 
 
 let () =

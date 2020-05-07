@@ -18,7 +18,21 @@ and margin_loss (g, w) =
         (g, (schedule_event check_margin (g.day + 1) w)))
 
 
+let set_maxmargin n (g, w) =
+  Printf.printf "the bank has changed your margin to $%i\n" n;
+  ({ g with maxmargin = n }, w)
+
+let ipo (g, w) =
+  let ng = add_stock g in
+  let stock = List.hd ng.stocks in
+  Printf.printf "%s corp has entered the market at $%i/share\n"
+    stock.symbol stock.price;
+  (ng, w)
+
 let default_script () =
-  schedule_events
-    [ (schedule_event check_margin 1) ]
+  apply_events
+    [ (schedule_event check_margin 1);
+      (schedule_event ipo 3);
+      (schedule_event (set_maxmargin 10000) 5);
+      (schedule_event ipo 6) ]
     initial_world
