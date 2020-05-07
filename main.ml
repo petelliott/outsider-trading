@@ -1,14 +1,27 @@
 open Game
 open Print
 
+let split_capitalize str =
+  List.filter (fun s -> s != "")
+    (String.split_on_char ' '
+       (String.uppercase_ascii str))
+
+let process_cmd game str =
+  match (split_capitalize str) with
+  | ["BUY"; n; stock]  -> Game.buy game stock (int_of_string n)
+  | ["SELL"; n; stock] -> Game.sell game stock (int_of_string n)
+  | ["EXIT"] -> exit 0 (* TODO  *)
+  | [] -> game
+  | _ -> print_endline "unknown command"; game
+
 
 let rec day_loop g h =
   if h == 8
   then (prompt_ret "markets are closed"; newln(); g)
   else (
     Printf.printf "hour%i>" h;
-    ignore (read_line ());
-    let ng = Game.step_hour g in
+    let ng = Game.step_hour (process_cmd g (read_line ()))
+    in
     print_prices g ng;
     newln ();
     day_loop ng (h + 1))

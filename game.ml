@@ -74,7 +74,7 @@ let apply_to_stock game sym fn =
     | car :: cdr ->
        if car.symbol = sym
        then (fn car) :: cdr
-       else inner cdr
+       else car :: inner cdr
   in {game with stocks = inner game.stocks}
 
 let get_stock game sym =
@@ -110,9 +110,9 @@ let intrest_owed game =
 
 
 let update_stock_price game stock =
-  { stock with price = Prob.rand_round
-                         ((Float.of_int stock.price)
-                         *. stock.derivative *. game.trend);
+  { stock with price = max 0 (Prob.rand_round
+                                ((Float.of_int stock.price)
+                                 *. stock.derivative *. game.trend));
                derivative = stock.derivative +. (Prob.gauss_rand 0.0 0.01) }
 
 
@@ -121,9 +121,9 @@ let update_stock_prices game stocks =
 
 
 let fluctuate_stock_price stock =
-  { stock with price = Prob.rand_round
-                         ((Float.of_int stock.price)
-                          *. (Prob.gauss_rand 1.0 (stock.volatility))) }
+  { stock with price = max 0 (Prob.rand_round
+                                ((Float.of_int stock.price)
+                                 *. (Prob.gauss_rand 1.0 (stock.volatility)))) }
 
 
 let fluctuate_stock_prices stocks =
@@ -132,7 +132,8 @@ let fluctuate_stock_prices stocks =
 
 let step_day game =
   { game with day = game.day + 1;
-              stocks = update_stock_prices game game.stocks }
+              stocks = update_stock_prices game game.stocks;
+              capital = game.capital - Prob.rand_round (intrest_owed game) }
 
 let step_hour game =
   {game with stocks = fluctuate_stock_prices game.stocks }
