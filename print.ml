@@ -44,8 +44,9 @@ let print_portfolio game =
   Printf.printf "capital: %s, intrest rate: %f\n"
     (num_to_dollars game.capital) game.rate;
   print_owned game;
-  Printf.printf "\nportfolio value: %s\nintrest owed: $%f\n"
+  Printf.printf "\nportfolio value: %s\nmargin remaining: %s, intrest owed: $%f\n"
     (num_to_dollars (portfolio_value game))
+    (num_to_dollars (margin_left game))
     (intrest_owed game)
 
 

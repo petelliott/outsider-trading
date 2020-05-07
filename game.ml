@@ -9,7 +9,8 @@ type game  = { capital: int;
                stocks:  stock list;
                rate:    float; (* per day interest rate *)
                day:     int;
-               trend:   float; } (* 1 day growth rate *)
+               trend:   float; (* 1 day growth rate *)
+               maxmargin: int; }
 
 exception Stock_not_found
 
@@ -65,7 +66,8 @@ let initial_game () =
        stocks  = [];
        rate    = 0.01;
        day     = 0;
-       trend   = 1.02 })
+       trend   = 1.03;
+       maxmargin = 1000; })
 
 let apply_to_stock game sym fn =
   let rec inner lst =
@@ -104,6 +106,9 @@ let margin game =
        (stock_margin cdr) + (max (-(car.owned * car.price)) 0)
   in (stock_margin game.stocks) +
        (max (-game.capital) 0)
+
+let margin_left game =
+  game.maxmargin - (margin game)
 
 let intrest_owed game =
   game.rate *. (Float.of_int (margin game))

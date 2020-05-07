@@ -15,10 +15,15 @@ let rec insert_ordered lst (k, v) =
      else (k2, v2) :: insert_ordered cdr (k,v)
 
 
-let schedule_event world event day =
+let schedule_event event day world =
   { world with schedule = insert_ordered world.schedule (day, event) }
 
-let add_random_event world event prob =
+let rec schedule_events sevts world =
+  match sevts with
+  | [] -> world
+  | car :: cdr -> car (schedule_events cdr world)
+
+let add_random_event event prob world =
   { world with random = (prob, event) :: world.random }
 
 let rec do_schedule (game, world) =
