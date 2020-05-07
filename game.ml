@@ -113,7 +113,7 @@ let update_stock_price game stock =
   { stock with price = max 0 (Prob.rand_round
                                 ((Float.of_int stock.price)
                                  *. stock.derivative *. game.trend));
-               derivative = stock.derivative +. (Prob.gauss_rand 0.0 0.01) }
+               derivative = stock.derivative *. (Prob.gauss_rand (1.0/.stock.derivative) 0.04) }
 
 
 let update_stock_prices game stocks =
