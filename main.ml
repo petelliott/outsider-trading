@@ -2,7 +2,7 @@ open Game
 open Print
 
 let split_capitalize str =
-  List.filter (fun s -> s != "")
+  List.filter (fun s -> s <> "")
     (String.split_on_char ' '
        (String.uppercase_ascii str))
 
@@ -14,12 +14,24 @@ let process_cmd game str =
   | [] -> game
   | _ -> print_endline "unknown command"; game
 
+let hour_to_time h =
+    match h with
+    | 0 -> " 9:00"
+    | 1 -> "10:00"
+    | 2 -> "11:00"
+    | 3 -> "12:00"
+    | 4 -> " 1:00"
+    | 5 -> " 2:00"
+    | 6 -> " 3:00"
+    | 7 -> " 4:00"
+    | _ -> raise (Failure "hour out of bounds")
+
 
 let rec day_loop g h =
   if h == 8
   then (prompt_ret "markets are closed"; newln(); g)
   else (
-    Printf.printf "hour%i>" h;
+    Printf.printf "%s> " (hour_to_time h);
     let ng = Game.step_hour (process_cmd g (read_line ()))
     in
     print_prices g ng;
