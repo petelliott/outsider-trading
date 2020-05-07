@@ -75,10 +75,23 @@ let prompt_ret str =
 
 let rec prompt_yn str =
   Printf.printf "%s [y/n]: " str;
-  match (String.get (String.uncapitalize_ascii (read_line ())) 0) with
-  | 'y' -> true
-  | 'n' -> false
+  match (String.uncapitalize_ascii (read_line ())) with
+  | "y" -> true
+  | "n" -> false
   | _   -> prompt_yn str
 
 let newln () =
   print_endline ""
+
+let clear_screen () =
+  Printf.printf "\o033[2J\o033[H"
+
+let alternate_screen () =
+  Printf.printf "\o033[s\o033[?1047h"
+
+let regular_screen () =
+  Printf.printf "\o033[?1047l\o033[u"
+
+let quit () =
+  regular_screen ();
+  exit 0;

@@ -13,7 +13,7 @@ let rec check_margin (g, w) =
 and margin_loss (g, w) =
   if (margin_left g) < 0
   then (print_endline "you did not make your margin call";
-        print_endline "GAME OVER"; exit 0)
+        print_endline "GAME OVER"; quit ())
   else (print_endline "you have made margin call";
         (g, (schedule_event check_margin (g.day + 1) w)))
 

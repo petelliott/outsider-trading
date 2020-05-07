@@ -16,7 +16,7 @@ let process_cmd game str =
   match (split_capitalize str) with
   | ["BUY"; n; stock]  -> blk_margin game (Game.buy game stock (int_of_string n))
   | ["SELL"; n; stock] -> blk_margin game (Game.sell game stock (int_of_string n))
-  | ["EXIT"] -> exit 0 (* TODO  *)
+  | ["EXIT"] -> quit () (* TODO  *)
   | [] -> game
   | _ -> print_endline "unknown command"; game
 
@@ -48,9 +48,10 @@ let rec day_loop g h =
 let do_day g =
   if prompt_yn "trade today?"
   then (print_endline "markets are open!"; day_loop g 0)
-  else g
+  else (newln (); g)
 
 let rec game_loop og (g, w) =
+  clear_screen ();
   print_endline (date g.day);
   let ng, nw = Event.do_event_day (g, w) in
   (newln ();
@@ -62,6 +63,11 @@ let rec game_loop og (g, w) =
 
 
 let () =
-  Random.self_init ();
-  let g = Game.initial_game () in
-  game_loop g (g, Script.default_script ())
+  try
+    alternate_screen ();
+    Random.self_init ();
+    let g = Game.initial_game () in
+    game_loop g (g, Script.default_script ())
+  with
+  | End_of_file -> regular_screen ()
+  | other -> regular_screen (); raise other
