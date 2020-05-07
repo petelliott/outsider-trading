@@ -2,10 +2,9 @@ open Game
 
 type event = Game.game * event_world -> Game.game * event_world
 and  event_world = { schedule: (int * event) list;
-                     random:   (float * event) list;
-                     news:     string list; }
+                     random:   (float * event) list; }
 
-let initial_world = { schedule = []; random = []; news = [] }
+let initial_world = { schedule = []; random = []; }
 
 let rec insert_ordered lst (k, v) =
   match lst with
@@ -21,12 +20,6 @@ let schedule_event world event day =
 
 let add_random_event world event prob =
   { world with random = (prob, event) :: world.random }
-
-let add_news world news =
-  { world with news = news :: world.news }
-
-let clear_news world =
-  { world with news = [] }
 
 let rec do_schedule (game, world) =
   match world.schedule with
@@ -49,15 +42,5 @@ let do_random (game, world) =
        else inner cdr gw
   in inner world.random (game, world)
 
-let rec print_news news =
-  match news with
-  | [] -> ()
-  | title :: cdr ->
-     print_endline title;
-     print_news cdr
-
 let do_event_day gw =
-  let (game, world) = do_random (do_schedule gw)
-  in print_endline "news:";
-     print_news world.news;
-     (game, (clear_news world))
+  do_random (do_schedule gw)
