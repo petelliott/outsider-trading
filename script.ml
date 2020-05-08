@@ -58,12 +58,30 @@ let positive_rumor_event (g, w) =
          (g.day + (max 1 (Prob.rand_round
                             (Prob.gauss_rand 3.5 1.0)))) w))
 
+
+let price_events =
+  [ (format_of_string "CEO: \"%s stock price too high imo\"\n", 0.8);
+    (format_of_string "CEO of %s wins hotdog eating contest\n", 1.2);
+    (format_of_string "%s loses $5m bet on the new york mets\n", 0.7);
+    (format_of_string "%s finds $3m in office couch cushions\n", 1.3);
+    (format_of_string "%s's Q3 earnings are better than expected\n", 1.2);
+    (format_of_string "%s's Q1 earnings dissapoint investors\n", 0.8); ]
+
+
+let stock_price_event (g, w) =
+  let stock = Prob.choice g.stocks in
+  let (event, mul) = Prob.choice price_events in
+  Printf.printf event stock.symbol;
+  (multiply_stock_price g stock.symbol mul, w)
+
+
 let default_script day =
   apply_events
     [ (schedule_event check_margin (1+day));
       (schedule_event ipo 3);
       (schedule_event (set_maxmargin 10000) 5);
       (schedule_event ipo 6);
-      (add_random_event negative_rumor_event 0.2);
-      (add_random_event positive_rumor_event 0.2) ]
+      (add_random_event negative_rumor_event 0.1);
+      (add_random_event positive_rumor_event 0.1);
+      (add_random_event stock_price_event 0.2); ]
     initial_world
