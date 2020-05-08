@@ -13,12 +13,14 @@ let blk_margin og ng =
   else ng
 
 let process_cmd game str =
-  match (split_capitalize str) with
-  | ["BUY"; n; stock]  -> blk_margin game (Game.buy game stock (int_of_string n))
-  | ["SELL"; n; stock] -> blk_margin game (Game.sell game stock (int_of_string n))
-  | ["EXIT"] -> quit () (* TODO  *)
-  | [] -> game
-  | _ -> print_endline "unknown command"; game
+  try
+    match (split_capitalize str) with
+    | ["BUY"; n; stock]  -> blk_margin game (Game.buy game stock (int_of_string n))
+    | ["SELL"; n; stock] -> blk_margin game (Game.sell game stock (int_of_string n))
+    | ["EXIT"] -> quit () (* TODO  *)
+    | [] -> game
+    | _ -> print_endline "unknown command"; game
+  with _ -> print_endline "invalid arguments"; game
 
 let hour_to_time h =
     match h with
@@ -38,7 +40,7 @@ let rec day_loop g h =
   then (prompt_ret "markets are closed"; newln(); g)
   else (
     Printf.printf "%s %s> " (hour_to_time h)
-      (num_to_dollars (margin_left g));
+      (num_to_dollars (available_to_spend g));
     let ng = Game.step_hour (process_cmd g (read_line ()))
     in
     newln();

@@ -29,10 +29,20 @@ let ipo (g, w) =
     stock.symbol stock.price;
   (ng, w)
 
+let test_rand gw =
+  print_endline "test";
+  gw
+
+(*let random_stock g =*)
+
+let negative_rumor (g, w) =
+  Printf.printf "[TODO: negative rumor about %s]"
+
 let default_script day =
   apply_events
     [ (schedule_event check_margin (1+day));
       (schedule_event ipo 3);
       (schedule_event (set_maxmargin 10000) 5);
-      (schedule_event ipo 6) ]
+      (schedule_event ipo 6);
+      (add_random_event test_rand 0.5) ]
     initial_world

@@ -110,6 +110,9 @@ let margin game =
 let margin_left game =
   game.maxmargin - (margin game)
 
+let available_to_spend game =
+  (margin_left game) + (max 0 game.capital)
+
 let intrest_owed game =
   game.rate *. (Float.of_int (margin game))
 

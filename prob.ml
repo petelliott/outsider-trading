@@ -16,3 +16,16 @@ let box_muller u1 u2=
 let gauss_rand mu sigma =
   (box_muller (Random.float 1.0) (Random.float 1.0))
   *. sigma +. mu
+
+(* reservoir sampling *)
+let choice list lst =
+  let rec ichoice list c n =
+    match list with
+    | [] -> c
+    | car::cdr ->
+       if (Random.float 1.0) < (1.0 /. n)
+       then ichoice cdr car (n +. 1.0)
+       else ichoice cdr c (n +. 1.0)
+  in match lst with
+     | [] -> raise (Failure "cant get random from empty list")
+     | car::cdr -> ichoice cdr car 2.0
