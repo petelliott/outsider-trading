@@ -57,24 +57,26 @@ let do_day g =
   then (print_endline "markets are open!"; day_loop g 0)
   else (newln (); (hidden_day_loop g 0))
 
-let rec game_loop og (g, w) =
+let rec game_loop save og (g, w) =
   clear_screen ();
   print_endline (date g.day);
   let ng, nw = Event.do_event_day (g, w) in
-  (newln ();
-   print_portfolio ng;
-   newln ();
-   print_prices og ng;
-   newln ();
-   game_loop ng ((Game.step_day (do_day ng)), nw))
+  save ng;
+  newln ();
+  print_portfolio ng;
+  newln ();
+  print_prices og ng;
+  newln ();
+  game_loop save ng ((Game.step_day (do_day ng)), nw)
 
 
 let () =
   try
     alternate_screen ();
     Random.self_init ();
-    let g = Game.initial_game () in
-    game_loop g (g, Script.default_script ())
+    let g = Serialize.load_game_from_file Sys.argv.(1) (Game.initial_game ()) in
+    game_loop (Serialize.save_game_to_file Sys.argv.(1))
+      g (g, Script.default_script g.day)
   with
   | End_of_file -> regular_screen ()
   | other -> regular_screen (); raise other

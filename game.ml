@@ -52,7 +52,7 @@ let add_stock game =
       price      = Prob.rand_round (Prob.gauss_rand 100.0 50.0);
       owned      = 0;
       derivative = (Prob.gauss_rand 1.0 0.03);
-      volatility = (Prob.gauss_rand 0.0 0.07);
+      volatility = (Prob.gauss_rand 0.0 0.03);
     } :: game.stocks }
 
 let rec add_n_stocks n game =
