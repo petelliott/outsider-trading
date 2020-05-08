@@ -60,18 +60,18 @@ let positive_rumor_event (g, w) =
 
 
 let price_events =
-  [ (format_of_string "CEO: \"%s stock price too high imo\"\n", 0.8);
-    (format_of_string "CEO of %s wins hotdog eating contest\n", 1.2);
-    (format_of_string "%s loses $5m bet on the new york mets\n", 0.7);
-    (format_of_string "%s finds $3m in office couch cushions\n", 1.3);
-    (format_of_string "%s's Q3 earnings are better than expected\n", 1.2);
-    (format_of_string "%s's Q1 earnings dissapoint investors\n", 0.8); ]
+  [ (Printf.printf "CEO: \"%s stock price too high imo\"\n", 0.8);
+    (Printf.printf "CEO of %s wins hotdog eating contest\n", 1.2);
+    (Printf.printf "%s loses $5m bet on the new york mets\n", 0.7);
+    (Printf.printf "%s finds $3m in office couch cushions\n", 1.3);
+    (Printf.printf "%s's Q3 earnings are better than expected\n", 1.2);
+    (Printf.printf "%s's Q1 earnings dissapoint investors\n", 0.8); ]
 
 
 let stock_price_event (g, w) =
   let stock = Prob.choice g.stocks in
   let (event, mul) = Prob.choice price_events in
-  Printf.printf event stock.symbol;
+  event stock.symbol;
   (multiply_stock_price g stock.symbol mul, w)
 
 
