@@ -1,6 +1,8 @@
 open Game
 open Print
 
+exception Skip_day
+
 let split_capitalize str =
   List.filter (fun s -> s <> "")
     (String.split_on_char ' '
@@ -17,10 +19,13 @@ let process_cmd game str =
     match (split_capitalize str) with
     | ["BUY"; n; stock]  -> blk_margin game (Game.buy game stock (int_of_string n))
     | ["SELL"; n; stock] -> blk_margin game (Game.sell game stock (int_of_string n))
-    | ["EXIT"] -> quit () (* TODO  *)
+    | ["SKIP"] -> raise Skip_day
+    | ["S"] -> raise Skip_day
     | [] -> game
     | _ -> print_endline "unknown command"; game
-  with _ -> print_endline "invalid arguments"; game
+  with
+  | Skip_day -> raise Skip_day
+  | _ -> print_endline "invalid arguments"; game
 
 let hour_to_time h =
     match h with
@@ -35,24 +40,26 @@ let hour_to_time h =
     | _ -> raise (Failure "hour out of bounds")
 
 
+let rec hidden_day_loop g h =
+  if h == 8
+  then g
+  else hidden_day_loop (Game.step_hour g) (1 + h)
+
 let rec day_loop g h =
   if h == 8
   then (prompt_ret "markets are closed"; newln(); g)
   else (
     Printf.printf "%s %s> " (hour_to_time h)
       (num_to_dollars (available_to_spend g));
-    let ng = Game.step_hour (process_cmd g (read_line ()))
-    in
-    newln();
-    print_prices g ng;
-    newln ();
-    day_loop ng (h + 1))
-
-
-let rec hidden_day_loop g h =
-  if h == 8
-  then g
-  else hidden_day_loop (Game.step_hour g) (1 + h)
+    try
+      let ng = Game.step_hour (process_cmd g (read_line ()))
+      in
+      newln();
+      print_prices g ng;
+      newln ();
+      day_loop ng (h + 1)
+    with
+    | Skip_day -> hidden_day_loop g h)
 
 let do_day g =
   if prompt_yn "trade today?"
