@@ -30,32 +30,33 @@ let ipo (g, w) =
   (ng, w)
 
 
+let resolve_rumor sym mul (g, w) =
+  if (Random.float 1.0) < 0.75
+  then (Printf.printf "the rumors about %s turned out to be true!\n" sym;
+        (multiply_stock_price g sym mul, w))
+  else (g, w)
+
 
 let negative_rumor_event (g, w) =
   let bound f = (max 0.0 (min 1.0 f)) in
   let stock = Prob.choice g.stocks in
   Printf.printf "[TODO: negative rumor about %s]\n"
     stock.symbol;
-  let resolution (g, w) =
-    Printf.printf "[TODO: negative rumor about %s is true]\n" stock.symbol;
-    (multiply_stock_price g stock.symbol (bound (Prob.gauss_rand 0.80 0.1)),
-     w)
-  in (g, (schedule_event resolution
-            (g.day + (max 1 (Prob.rand_round
-                               (Prob.gauss_rand 3.5 1.0)))) w))
+  (g, (schedule_event (resolve_rumor stock.symbol
+                         (bound (Prob.gauss_rand 0.80 0.1)))
+         (g.day + (max 1 (Prob.rand_round
+                            (Prob.gauss_rand 3.5 1.0)))) w))
+
 
 let positive_rumor_event (g, w) =
   let bound f = (max 1.0 f) in
   let stock = Prob.choice g.stocks in
   Printf.printf "[TODO: positive rumor about %s]\n"
     stock.symbol;
-  let resolution (g, w) =
-    Printf.printf "[TODO: positive rumor about %s is true]\n" stock.symbol;
-    (multiply_stock_price g stock.symbol (bound (Prob.gauss_rand 1.2 0.1)),
-     w)
-  in (g, (schedule_event resolution
-            (g.day + (max 1 (Prob.rand_round
-                               (Prob.gauss_rand 3.5 1.0)))) w))
+  (g, (schedule_event (resolve_rumor stock.symbol
+                         (bound (Prob.gauss_rand 1.2 0.1)))
+         (g.day + (max 1 (Prob.rand_round
+                            (Prob.gauss_rand 3.5 1.0)))) w))
 
 let default_script day =
   apply_events
