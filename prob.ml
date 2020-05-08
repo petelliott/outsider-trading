@@ -18,7 +18,7 @@ let gauss_rand mu sigma =
   *. sigma +. mu
 
 (* reservoir sampling *)
-let choice list lst =
+let choice lst =
   let rec ichoice list c n =
     match list with
     | [] -> c

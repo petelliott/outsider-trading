@@ -123,6 +123,11 @@ let update_stock_price game stock =
                                  *. stock.derivative *. game.trend));
                derivative = stock.derivative *. (Prob.gauss_rand (1.0/.stock.derivative) 0.04) }
 
+let multiply_stock_price game sym m =
+  apply_to_stock game sym
+    (fun stock -> { stock with price = Prob.rand_round
+                                         ((Float.of_int stock.price) *. m)})
+
 
 let update_stock_prices game stocks =
   List.map (update_stock_price game) stocks

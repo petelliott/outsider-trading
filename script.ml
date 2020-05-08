@@ -29,14 +29,33 @@ let ipo (g, w) =
     stock.symbol stock.price;
   (ng, w)
 
-let test_rand gw =
-  print_endline "test";
-  gw
 
-(*let random_stock g =*)
 
-let negative_rumor (g, w) =
-  Printf.printf "[TODO: negative rumor about %s]"
+let negative_rumor_event (g, w) =
+  let bound f = (max 0.0 (min 1.0 f)) in
+  let stock = Prob.choice g.stocks in
+  Printf.printf "[TODO: negative rumor about %s]\n"
+    stock.symbol;
+  let resolution (g, w) =
+    Printf.printf "[TODO: negative rumor about %s is true]\n" stock.symbol;
+    (multiply_stock_price g stock.symbol (bound (Prob.gauss_rand 0.80 0.1)),
+     w)
+  in (g, (schedule_event resolution
+            (g.day + (max 1 (Prob.rand_round
+                               (Prob.gauss_rand 3.5 1.0)))) w))
+
+let positive_rumor_event (g, w) =
+  let bound f = (max 1.0 f) in
+  let stock = Prob.choice g.stocks in
+  Printf.printf "[TODO: positive rumor about %s]\n"
+    stock.symbol;
+  let resolution (g, w) =
+    Printf.printf "[TODO: positive rumor about %s is true]\n" stock.symbol;
+    (multiply_stock_price g stock.symbol (bound (Prob.gauss_rand 1.2 0.1)),
+     w)
+  in (g, (schedule_event resolution
+            (g.day + (max 1 (Prob.rand_round
+                               (Prob.gauss_rand 3.5 1.0)))) w))
 
 let default_script day =
   apply_events
@@ -44,5 +63,6 @@ let default_script day =
       (schedule_event ipo 3);
       (schedule_event (set_maxmargin 10000) 5);
       (schedule_event ipo 6);
-      (add_random_event test_rand 0.5) ]
+      (add_random_event negative_rumor_event 0.2);
+      (add_random_event positive_rumor_event 0.2) ]
     initial_world
