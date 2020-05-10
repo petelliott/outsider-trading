@@ -76,12 +76,11 @@ let stock_price_event (g, w) =
 
 
 let default_script day =
-  apply_events
-    [ (schedule_event check_margin (1+day));
-      (schedule_event ipo 3);
-      (schedule_event (set_maxmargin 10000) 5);
-      (schedule_event ipo 6);
-      (add_random_event negative_rumor_event 0.1);
-      (add_random_event positive_rumor_event 0.1);
-      (add_random_event stock_price_event 0.2); ]
-    initial_world
+  initial_world
+  |> schedule_event check_margin (1+day)
+  |> schedule_event ipo 3
+  |> schedule_event (set_maxmargin 10000) 5
+  |> schedule_event ipo 6
+  |> add_random_event negative_rumor_event 0.1
+  |> add_random_event positive_rumor_event 0.1
+  |> add_random_event stock_price_event 0.2

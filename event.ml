@@ -18,11 +18,6 @@ let rec insert_ordered lst (k, v) =
 let schedule_event event day world =
   { world with schedule = insert_ordered world.schedule (day, event) }
 
-let rec apply_events sevts world =
-  match sevts with
-  | [] -> world
-  | car :: cdr -> car (apply_events cdr world)
-
 let add_random_event event prob world =
   { world with random = (prob, event) :: world.random }
 
