@@ -13,7 +13,7 @@ let date day =
      | 1 -> "st"
      | 2 -> "nd"
      | 3 -> "rd"
-     | _ -> "th")
+     | _ -> "th") ^ ", 1982"
 
 
 let num_to_dollars n =
@@ -94,4 +94,10 @@ let regular_screen () =
 
 let quit () =
   regular_screen ();
-  exit 0;
+  exit 0
+
+let bold s =
+  "\o033[1m" ^ s ^ "\o033[0m"
+
+let dialogue name d =
+  (bold name) ^ ": " ^ d

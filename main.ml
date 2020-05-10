@@ -69,8 +69,8 @@ let do_day g =
 let rec game_loop save og (g, w) =
   clear_screen ();
   print_endline (date g.day);
+  save g;
   let ng, nw = Event.do_event_day (g, w) in
-  save ng;
   newln ();
   print_portfolio ng;
   newln ();
@@ -78,11 +78,15 @@ let rec game_loop save og (g, w) =
   newln ();
   game_loop save ng ((Game.step_day (do_day ng)), nw)
 
+let maybe_do_tutorial file =
+  if not (Sys.file_exists file)
+  then Tutorial.do_intro ()
 
 let () =
   try
     alternate_screen ();
     Random.self_init ();
+    maybe_do_tutorial Sys.argv.(1);
     let g = Serialize.load_game_from_file Sys.argv.(1) (Game.initial_game ()) in
     game_loop (Serialize.save_game_to_file Sys.argv.(1))
       g (g, Script.default_script g.day)
