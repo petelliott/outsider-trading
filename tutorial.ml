@@ -43,27 +43,27 @@ HCM: $179234 (0%), JIM: $721 (0%), PIE: $462 (-9%), EWA: $10047 (0%), IBY: $0 (0
 
 let do_tutorial () =
   newln ();
-  print_endline (dialogue "mr. peterson"
+  outln (dialogue "mr. peterson"
                    "righty-ho! this is your news screen. it will tell \
                    you pertinent financial news and alert you of \
                     anything that will affect you.");
 
   prompt_ret news_scrot;
   newln ();
-  print_endline (dialogue "mr. peterson"
+  outln (dialogue "mr. peterson"
                    "and over here is your balance screen. it shows \
                     what stocks you own and how much money you have");
   prompt_ret balance_scrot;
   newln ();
-  print_endline (dialogue "mr. peterson"
+  outln (dialogue "mr. peterson"
                    "if you aren't to hungover to show up to work, then \
                    you can trade during the 8 hours that markets are open");
-  print_endline (dialogue "mr. peterson"
+  outln (dialogue "mr. peterson"
                    "every hour you can buy, sell, do nothing, or skip \
                     the rest of the day");
   prompt_ret day_scrot;
   newln ();
-  print_endline (dialogue "mr. peterson"
+  outln (dialogue "mr. peterson"
                    "look. my horse needs a perm, so I have to go.");
   prompt_ret (dialogue "mr. peterson"
                 "if you need anything ask peter.")
@@ -80,8 +80,8 @@ let do_intro () =
   prompt_ret "your daddy pulled some strings to get you this job at \
               the bay street trading firm, peterson & sons.";
   newln ();
-  print_endline (dialogue "mr. peterson" "hey new guy, whats your name?");
-  Printf.printf "name: "; ignore (read_line ()); (* suckers *)
+  outln (dialogue "mr. peterson" "hey new guy, whats your name?");
+  out "name: "; ignore (inp ()); (* suckers *)
   newln ();
 
   let prompt = (dialogue "mr. peterson"

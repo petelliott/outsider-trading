@@ -10,7 +10,7 @@ let split_capitalize str =
 
 let blk_margin og ng =
   if (margin_left ng) < 0 && (margin_left ng) < (margin_left og)
-  then (print_endline "trade has been blocked for insufficient margin";
+  then (outln "trade has been blocked for insufficient margin";
         og)
   else ng
 
@@ -22,10 +22,10 @@ let process_cmd game str =
     | ["SKIP"] -> raise Skip_day
     | ["S"] -> raise Skip_day
     | [] -> game
-    | _ -> print_endline "unknown command"; game
+    | _ -> outln "unknown command"; game
   with
   | Skip_day -> raise Skip_day
-  | _ -> print_endline "invalid arguments"; game
+  | _ -> outln "invalid arguments"; game
 
 let hour_to_time h =
     match h with
@@ -49,10 +49,10 @@ let rec day_loop g h =
   if h == 8
   then (prompt_ret "markets are closed"; newln(); g)
   else (
-    Printf.printf "%s %s> " (hour_to_time h)
-      (num_to_dollars (available_to_spend g));
+    out (Printf.sprintf "%s %s> " (hour_to_time h)
+              (num_to_dollars (available_to_spend g)));
     try
-      let ng = Game.step_hour (process_cmd g (read_line ()))
+      let ng = Game.step_hour (process_cmd g (inp ()))
       in
       newln();
       print_prices g ng;
@@ -63,12 +63,12 @@ let rec day_loop g h =
 
 let do_day g =
   if prompt_yn "trade today?"
-  then (print_endline "markets are open!"; day_loop g 0)
+  then (outln "markets are open!"; day_loop g 0)
   else (newln (); (hidden_day_loop g 0))
 
 let rec game_loop save og (g, w) =
   clear_screen ();
-  print_endline (date g.day);
+  outln (date g.day);
   save g;
   let ng, nw = Event.do_event_day (g, w) in
   newln ();

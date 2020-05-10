@@ -14,28 +14,6 @@ type game  = { capital: int;
 
 exception Stock_not_found
 
-let print_list list pfun =
-  Printf.printf "[";
-  let rec print_sep l =
-    match l with
-    | [] -> Printf.printf "]"
-    | car :: [] -> pfun car; print_sep []
-    | car :: cdr -> pfun car;
-                    Printf.printf "; ";
-                    print_sep cdr
-  in print_sep list
-
-(*
-let debug_print game =
-  Printf.printf "{capital = %i; stocks = " game.capital;
-  print_list game.stocks (Printf.printf "%i");
-  Printf.printf "; prices = ";
-  print_list game.prices (Printf.printf "%i");
-  Printf.printf "; names = ";
-  print_list game.names (Printf.printf "\"%s\"");
-  Printf.printf "; rate = %f; day = %i }\n" game.rate game.day
- *)
-
 
 let random_letter () =
   Char.chr ((Random.int (90 - 65)) + 65)

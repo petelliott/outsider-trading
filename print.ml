@@ -1,4 +1,5 @@
 open Game
+open Platform
 
 let date day =
   (match (day mod 5) with
@@ -31,23 +32,36 @@ let num_to_percent n =
   then Printf.sprintf "\o033[1;32m+%i%%\o033[0m" perc
   else Printf.sprintf "\o033[1;31m-%i%%\o033[0m" (-perc)
 
+
+let out = out
+let inp = inp
+
+let newln () =
+  out "\n"
+
+let outln str =
+  out str;
+  newln ()
+
 let print_owned game =
   List.iter
     (fun stock ->
-      Printf.printf "%s: %i (%s), "
-        stock.symbol stock.owned
-        (num_to_dollars (stock.owned * stock.price)))
+      out
+        (Printf.sprintf "%s: %i (%s), "
+           stock.symbol stock.owned
+           (num_to_dollars (stock.owned * stock.price))))
     game.stocks
 
 
 let print_portfolio game =
-  Printf.printf "capital: %s, intrest rate: %f\n"
-    (num_to_dollars game.capital) game.rate;
+  out (Printf.sprintf "capital: %s, intrest rate: %f\n"
+            (num_to_dollars game.capital) game.rate);
   print_owned game;
-  Printf.printf "\nportfolio value: %s\nmargin remaining: %s, intrest owed: $%f\n"
-    (num_to_dollars (portfolio_value game))
-    (num_to_dollars (margin_left game))
-    (intrest_owed game)
+  out (Printf.sprintf "\nportfolio value: %s\nmargin remaining: %s, \
+                         intrest owed: $%f\n"
+            (num_to_dollars (portfolio_value game))
+            (num_to_dollars (margin_left game))
+            (intrest_owed game))
 
 let rec stock_iter2 f a b =
   match (a, b) with
@@ -62,35 +76,33 @@ let rec stock_iter2 f a b =
 let print_prices og ng =
   stock_iter2
     (fun o n ->
-      Printf.printf "%s: $%i (%s), "
-        n.symbol n.price (num_to_percent (((Float.of_int n.price) -.
-                                             Float.of_int(o.price)) /.
-                                            Float.of_int(o.price))))
+      out (Printf.sprintf "%s: $%i (%s), "
+                n.symbol n.price (num_to_percent (((Float.of_int n.price) -.
+                                                     Float.of_int(o.price)) /.
+                                                    Float.of_int(o.price)))))
     og.stocks ng.stocks
 
 
 let prompt_ret str =
-  Printf.printf "%s [RET]: " str;
+  out (Printf.sprintf "%s [RET]: " str);
   ignore (read_line ())
 
 let rec prompt_yn str =
-  Printf.printf "%s [y/n]: " str;
-  match (String.uncapitalize_ascii (read_line ())) with
+  out (Printf.sprintf "%s [y/n]: " str);
+  match (String.uncapitalize_ascii (inp ())) with
   | "y" -> true
   | "n" -> false
   | _   -> prompt_yn str
 
-let newln () =
-  print_endline ""
 
 let clear_screen () =
-  Printf.printf "\o033[2J\o033[H"
+  out "\o033[2J\o033[H"
 
 let alternate_screen () =
-  Printf.printf "\o033[s\o033[?1047h"
+  out "\o033[s\o033[?1047h"
 
 let regular_screen () =
-  Printf.printf "\o033[?1047l\o033[u"
+  out "\o033[?1047l\o033[u"
 
 let quit () =
   regular_screen ();
