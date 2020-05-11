@@ -7,11 +7,13 @@ ARCH=unix
 all: native # byte profile debug
 
 js: ARCH=js
+js: PKGS=yojson,js_of_ocaml
 js: byte
 	js_of_ocaml main.byte
 
 
 clean:
+	rm -f main.js
 	$(OCB) -I platform/$(ARCH) -clean
 
 native:
