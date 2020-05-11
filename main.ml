@@ -78,17 +78,17 @@ let rec game_loop save og (g, w) =
   newln ();
   game_loop save ng ((Game.step_day (do_day ng)), nw)
 
-let maybe_do_tutorial file =
-  if not (Sys.file_exists file)
+let maybe_do_tutorial ()=
+  if not (Platform.saved_game_exists ())
   then Tutorial.do_intro ()
 
 let () =
   try
     alternate_screen ();
     Random.self_init ();
-    maybe_do_tutorial Sys.argv.(1);
-    let g = Serialize.load_game_from_file Sys.argv.(1) (Game.initial_game ()) in
-    game_loop (Serialize.save_game_to_file Sys.argv.(1))
+    maybe_do_tutorial ();
+    let g = Platform.load_game (Game.initial_game ()) in
+    game_loop Platform.save_game
       g (g, Script.default_script g.day)
   with
   | End_of_file -> regular_screen ()
