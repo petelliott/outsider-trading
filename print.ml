@@ -25,7 +25,7 @@ let num_to_dollars n =
   else Printf.sprintf "\o033[1;31m-$%i\o033[0m" (-n)
 
 let num_to_percent n =
-  let perc = (Float.to_int (n *. 100.0)) in
+  let perc = (int_of_float (n *. 100.0)) in
   if perc = 0
   then Printf.sprintf "\o033[1m%i%%\o033[0m" perc
   else if perc > 0
@@ -77,9 +77,9 @@ let print_prices og ng =
   stock_iter2
     (fun o n ->
       out (Printf.sprintf "%s: $%i (%s), "
-                n.symbol n.price (num_to_percent (((Float.of_int n.price) -.
-                                                     Float.of_int(o.price)) /.
-                                                    Float.of_int(o.price)))))
+                n.symbol n.price (num_to_percent (((float_of_int n.price) -.
+                                                     float_of_int(o.price)) /.
+                                                    float_of_int(o.price)))))
     og.stocks ng.stocks
 
 

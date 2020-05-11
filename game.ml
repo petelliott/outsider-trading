@@ -92,19 +92,19 @@ let available_to_spend game =
   (margin_left game) + (max 0 game.capital)
 
 let intrest_owed game =
-  game.rate *. (Float.of_int (margin game))
+  game.rate *. (float_of_int (margin game))
 
 
 let update_stock_price game stock =
   { stock with price = max 0 (Prob.rand_round
-                                ((Float.of_int stock.price)
+                                ((float_of_int stock.price)
                                  *. stock.derivative *. game.trend));
                derivative = stock.derivative *. (Prob.gauss_rand (1.0/.stock.derivative) 0.04) }
 
 let multiply_stock_price game sym m =
   apply_to_stock game sym
     (fun stock -> { stock with price = Prob.rand_round
-                                         ((Float.of_int stock.price) *. m)})
+                                         ((float_of_int stock.price) *. m)})
 
 
 let update_stock_prices game stocks =
@@ -113,7 +113,7 @@ let update_stock_prices game stocks =
 
 let fluctuate_stock_price stock =
   { stock with price = max 0 (Prob.rand_round
-                                ((Float.of_int stock.price)
+                                ((float_of_int stock.price)
                                  *. (Prob.gauss_rand 1.0 (stock.volatility)))) }
 
 
