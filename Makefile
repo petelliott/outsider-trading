@@ -1,21 +1,27 @@
 
 PKGS = yojson
-OCB_FLAGS = -tag bin_annot -pkgs $(PKGS) -use-ocamlfind
+OCB_FLAGS = -tag bin_annot -pkgs $(PKGS) -use-ocamlfind -r
 OCB = 		ocamlbuild $(OCB_FLAGS)
+ARCH=unix
 
 all: native # byte profile debug
 
+js: ARCH=js
+js: byte
+	js_of_ocaml main.byte
+
+
 clean:
-	$(OCB) -clean
+	$(OCB) -I platform/$(ARCH) -clean
 
 native:
-	$(OCB) main.native
+	$(OCB) -I platform/$(ARCH) main.native
 
 byte:
-	$(OCB) main.byte
+	$(OCB) -I platform/$(ARCH) main.byte
 
 profile:
-	$(OCB) -tag profile main.native
+	$(OCB) -I platform/$(ARCH) -tag profile main.native
 
 debug:
-	$(OCB) -tag debug main.byte
+	$(OCB) -I platform/$(ARCH) -tag debug main.byte
